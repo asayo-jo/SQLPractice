@@ -72,7 +72,6 @@ FROM
 WHERE
   country_code IN ('NLB', 'ALB', 'DZA');
 
-
 -- 問7
 -- 独立独立記念日がない国をすべて抽出してください。
 SELECT
@@ -114,7 +113,6 @@ FROM
   countries
 WHERE
   name LIKE '%ia';
-
 
 -- 問10
 -- 名前の中に「st」が含まれる国を抽出してください。
@@ -177,7 +175,7 @@ WHERE
 
 -- 問14
 -- 全ての地方をグループ化せずに表示してください。
-SELECT
+SELECT DISTINCT
   region
 FROM
   countries;
@@ -272,14 +270,11 @@ GROUP BY
 -- 問23
 -- アジア大陸の中で最小の表面積を表示してください
 SELECT
-  surface_area AS 'アジアの最小表面積'
+  MIN(surface_area) AS 'アジアの最小表面積'
 FROM
   countries
 WHERE
-  continent = 'Asia'
-ORDER BY
-  surface_area ASC
-LIMIT 1;
+  continent = 'Asia';
 
 -- 問24
 -- アジア大陸の表面積の合計を表示してください。
@@ -297,10 +292,9 @@ SELECT
   countrylanguages.language
 FROM
   countries
-JOIN
-  countrylanguages
-ON
-  countries.code = countrylanguages.country_code;
+  JOIN
+    countrylanguages
+    ON countries.code = countrylanguages.country_code;
 
 -- 問26
 -- 全ての国と言語と市区町村を表示してください。
@@ -310,15 +304,12 @@ SELECT
   countrylanguages.language
 FROM
   countries
-JOIN
-  countrylanguages
-ON
-  countries.code = countrylanguages.country_code
-JOIN
-  cities
-ON
-  countries.code = cities.country_code;
-
+  JOIN
+    countrylanguages
+    ON countries.code = countrylanguages.country_code
+  JOIN
+    cities
+    ON countries.code = cities.country_code;
 
 -- 問27
 -- 全ての有名人を出力してください。左側外部結合を使用して国名なし（country_codeがNULL）も表示してください。
@@ -329,7 +320,7 @@ FROM
   celebrities
   LEFT JOIN
     countries
-  ON celebrities.country_code = countries.code;
+    ON celebrities.country_code = countries.code;
 
 -- 問28
 -- 全ての有名人の名前,国名、第一言語を出力してください。
@@ -339,19 +330,17 @@ SELECT
   countrylanguages.language
 FROM
   celebrities
-LEFT JOIN
-  countries
-ON
-  celebrities.country_code = countries.code
-LEFT JOIN
-  countrylanguages
-ON
-  countries.code = countrylanguages.country_code
+  JOIN
+    countries
+    ON celebrities.country_code = countries.code
+  JOIN
+    countrylanguages
+    ON countries.code = countrylanguages.country_code
 WHERE
-  countrylanguages.language = (
-    SELECT MIN(language)
-    FROM countrylanguages
-    WHERE countrylanguages.country_code = countries.code
+  countrylanguages.percentage = (
+    SELECT MAX(sub_lang.percentage)
+    FROM countrylanguages sub_lang
+    WHERE sub_lang.country_code = countrylanguages.country_code
   )
 ;
 
